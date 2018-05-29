@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>腾讯视频分享地址转视频源地址（mp4格式）</title>
+  <style>
+    ul {
+      list-style: none;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>腾讯视频分享地址转视频源地址（mp4格式）</h2>
+  <ul>
+    <li>
+      <h3>1、找到视频分享地址中的vid或者腾讯视频播放地址url中的xxxxx.html</h3>
+      <p>例如：
+        <span>https://v.qq.com/iframe/player.html?vid=
+          <span style="color: red;">l0552ekdj9x</span>&tiny=0&auto=0</span>
+        <br>
+        <span>https://v.qq.com/x/cover/wagzbx91asjomnu/
+          <span style="color: red;">l0552ekdj9x</span>.html?start=25</span>
+      </p>
+    </li>
+    <li>
+      <h3>2、复制上例中的视频id或文件名，即红色字体。并粘贴输入下方输入框点击确定</h3>
+      <p>
+        <input type="text" id="Vid">
+        <button onclick="sub()">确定</button>
+      </p>
+    </li>
+    <li class="aBox">
+      <a id="mapAddress" href="" target="_blank">视频源地址</a>
+      提示：该源地址每隔几小时就会失效，请下载本地另存服务器转化为长期有效地址
+    </li>
+  </ul>
+</body>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><script>
+  var mapAddress = ""
+  $(".aBox").hide()
+
+  function sub() {
+    var vid = $('#Vid').val().trim()
+    if (vid) {
+      $.ajax({
+        type: 'get',
+        url: "http://vv.video.qq.com/getinfo?vids=" + vid + "&platform=101001&charge=0&otype=json",
+        headers: {
+          'Content-Type': 'application/x-javascript; charset=utf-8'
+        },
+        dataType: "jsonp",
+        jsonp: "callback",
+        jsonpCallback: "callback_success",
+        success: function (data) {
+          var info = data.vl.vi[0]
+          var url = info.ul.ui[0].url
+          var mp4 = info.fn
+          var vkey = info.fvkey
+          mapAddress = url + mp4 + "?vkey=" + vkey
+          $(".aBox").show()
+          $("#mapAddress").attr("href", mapAddress)
+        },
+        error: function () {
+
+        }
+      })
+    } else {
+      alert("请输入视频的vid")
+    }
+
+  }
+</script>
+
+</html>
